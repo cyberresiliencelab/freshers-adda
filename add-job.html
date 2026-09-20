@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#141a2e" />
+<title>Add a job — Freshers Adda (team tool)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;450;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+    --ink:#141a2e;--page:#f6f7fb;--card:#fff;--line:#e5e8f0;--text:#1a1f30;--muted:#606a85;--faint:#8b93a9;
+    --brand:#4f46e5;--ok:#127a4a;--ok-bg:#e5f5ec;--warn:#c26a12;--err:#d6294a;
+    --font-d:"Space Grotesk",system-ui,sans-serif;--font-b:"Inter",system-ui,-apple-system,sans-serif;}
+  *,*::before,*::after{box-sizing:inherit}
+  body{margin:0;background:var(--page);color:var(--text);font-family:var(--font-b);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+  @media (prefers-color-scheme:dark){:root{--page:#0f1320;--card:#171d2e;--line:#28304a;--text:#eef1f8;--muted:#9aa3bd;--faint:#727c98;--ink:#0b0f1a;--ok:#41d99b;--ok-bg:#123027}}
+  .wrap{max-width:660px;margin:0 auto;padding:0 16px}
+  a{color:var(--brand)}
+  header{background:radial-gradient(120% 90% at 88% -10%, rgba(79,91,255,.34), transparent 60%),var(--ink);color:#fff;padding:calc(env(safe-area-inset-top,0px) + 20px) 0 22px}
+  header .mark{font-family:var(--font-d);font-weight:700;font-size:12px;letter-spacing:.14em;color:#8f98c4}
+  header h1{font-family:var(--font-d);font-weight:600;font-size:23px;margin:10px 0 6px;letter-spacing:-.01em}
+  header p{color:#aeb6d6;font-size:13px;margin:0;max-width:52ch}
+  header p b{color:#fff}
+  main{padding:18px 0 40px}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .field{margin-bottom:12px}
+  .field.full{grid-column:1 / -1}
+  label{display:block;font-size:12px;font-weight:600;color:var(--muted);margin-bottom:5px}
+  label .req{color:var(--err)}
+  input,select,textarea{width:100%;border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:10px;padding:11px 12px;font-size:14.5px;font-family:var(--font-b)}
+  select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%238b93a9' stroke-width='2'%3E%3Cpath d='M3 5l3 3 3-3'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px}
+  input:focus,select:focus,textarea:focus{outline:2px solid var(--brand);outline-offset:1px;border-color:transparent}
+  textarea{min-height:64px;resize:vertical}
+  .hint{font-size:11.5px;color:var(--faint);margin-top:5px;line-height:1.45}
+  .hint.warn{color:var(--warn)}
+  fieldset{border:1px solid var(--line);border-radius:12px;padding:14px;margin:0 0 16px;background:var(--card)}
+  legend{font-family:var(--font-d);font-weight:600;font-size:13px;padding:0 6px;color:var(--text)}
+  #venueWrap[hidden]{display:none}
+  .btn{border:0;border-radius:11px;padding:13px 18px;font-weight:600;font-size:15px;font-family:var(--font-b);cursor:pointer}
+  .btn.primary{background:var(--brand);color:#fff;width:100%}
+  .btn.ghost{background:transparent;border:1px solid var(--line);color:var(--muted)}
+  .errbox{background:#fdebef;border:1px solid #f4b8c4;color:#9a1c33;border-radius:10px;padding:10px 12px;font-size:13px;margin-bottom:12px;display:none}
+  @media (prefers-color-scheme:dark){.errbox{background:#3a1c26;border-color:#5c2733;color:#ff9db0}}
+  .errbox ul{margin:6px 0 0;padding-left:18px}
+  .added{margin-top:22px}
+  .added h2{font-family:var(--font-d);font-weight:600;font-size:16px;margin:0 0 10px;display:flex;align-items:center;justify-content:space-between}
+  .added h2 span{font-size:12px;color:var(--muted);font-weight:500}
+  .row{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:11px;padding:10px 12px;margin-bottom:8px}
+  .row .dot{width:10px;height:10px;border-radius:2px;flex:none}
+  .row .txt{flex:1;min-width:0}
+  .row .txt b{font-size:13.5px;display:block;font-family:var(--font-d);font-weight:600}
+  .row .txt small{font-size:11.5px;color:var(--muted)}
+  .row button{border:0;background:transparent;color:var(--err);font-size:18px;cursor:pointer;padding:4px 6px}
+  .outwrap{margin-top:16px;display:none}
+  .outwrap h2{font-family:var(--font-d);font-weight:600;font-size:16px;margin:0 0 4px}
+  .outwrap p{font-size:12.5px;color:var(--muted);margin:0 0 10px}
+  .outwrap p code{font-family:ui-monospace,Menlo,monospace;font-size:11px;background:var(--ink);color:#cdd4f0;padding:1px 6px;border-radius:5px}
+  pre{background:var(--ink);color:#dbe0f5;border-radius:12px;padding:14px;overflow:auto;font-family:ui-monospace,Menlo,monospace;font-size:11.5px;line-height:1.6;margin:0;white-space:pre;-webkit-overflow-scrolling:touch}
+  .copybar{display:flex;gap:8px;margin-top:10px}
+  .copybar .btn{flex:1}
+  .toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 20px);transform:translateX(-50%);background:var(--ink);color:#fff;padding:11px 18px;border-radius:999px;font-size:13px;font-weight:600;opacity:0;transition:opacity .2s;pointer-events:none;z-index:50}
+  .toast.show{opacity:1}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="mark">FRESHERS ADDA · TEAM TOOL</div>
+    <h1>Add a job</h1>
+    <p>Fill this in, tap <b>Add entry</b>, then <b>Copy</b>. Paste the block at the <b>top of the <code style="color:#cdd4f0">JOBS</code> array</b> in <b>index.html</b> and push. No hand-editing the array.</p>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="errbox" id="errbox"></div>
+
+  <fieldset>
+    <legend>The role</legend>
+    <div class="grid">
+      <div class="field"><label>Company <span class="req">*</span></label><input id="co" placeholder="e.g. TCS" /></div>
+      <div class="field"><label>Vacancies</label><input id="vac" placeholder="Multiple / Bulk hiring / 5" /><div class="hint">A number shows as "N openings"; text shows as-is.</div></div>
+      <div class="field full"><label>Role / position <span class="req">*</span></label><input id="role" placeholder="e.g. Assistant System Engineer (TCS NQT)" /></div>
+      <div class="field"><label>Department <span class="req">*</span></label><select id="dept"><option value="">Select…</option></select></div>
+      <div class="field"><label>Sub-department <span class="req">*</span></label><select id="sub" disabled><option value="">Select department first</option></select></div>
+      <div class="field"><label>Type</label><select id="type"><option>Internship</option><option selected>Trainee</option><option>Full-time</option></select></div>
+      <div class="field"><label>State</label><select id="state"><option value="TS">Telangana</option><option value="AP">Andhra Pradesh</option></select></div>
+      <div class="field full"><label>City</label><input id="city" list="cities" placeholder="e.g. Hyderabad" value="Hyderabad" />
+        <datalist id="cities"><option>Hyderabad</option><option>Visakhapatnam</option><option>Vijayawada</option><option>Amaravati / Vizag</option><option>Amaravati</option><option>Tirupati</option><option>Guntur</option></datalist></div>
+      <div class="field full"><label>Short note</label><textarea id="note" placeholder="One factual line: who can apply, batch, process."></textarea></div>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>Apply &amp; dates</legend>
+    <div class="field"><label>Apply link <span class="req">*</span></label><input id="apply" type="url" placeholder="https://…  (official careers page or live board search)" /><div class="hint warn">Must be a real, working link. Paste it in a browser to test before you publish.</div></div>
+    <div class="grid">
+      <div class="field"><label>Posted date</label><input id="posted" type="date" /></div>
+      <div class="field"><label>Last date (optional)</label><input id="last" type="date" /><div class="hint">If set, the card auto-hides after this date.</div></div>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>Interview</legend>
+    <div class="field"><label>Mode</label><select id="imode"><option>Online</option><option>In-person</option><option>Walk-in</option><option>Hybrid</option><option>Varies</option></select></div>
+    <div id="venueWrap">
+      <div class="field"><label>Venue</label><input id="ivenue" placeholder="Company, area, city (confirm in notification)" /></div>
+      <div class="field"><label>Directions search (venueQuery)</label><input id="ivenuequery" placeholder="Company area city — becomes the Maps 'Directions' link" /><div class="hint">Tip: "Company + area + city", e.g. "Tech Mahindra Rushikonda Visakhapatnam".</div></div>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>Contact</legend>
+    <div class="field"><label>Name</label><input id="cname" value="Talent Acquisition — Fresher Hiring" /></div>
+    <div class="grid">
+      <div class="field"><label>Title</label><input id="ctitle" placeholder="optional" /></div>
+      <div class="field"><label>Phone</label><input id="cphone" placeholder="only if verified" inputmode="tel" /></div>
+    </div>
+    <div class="field"><label>Email</label><input id="cemail" type="email" placeholder="only if verified" /></div>
+    <div class="hint warn">Only add a phone/email you've actually verified with the employer. Leave blank and the card shows "Apply / enquire on official page". Never publish an unverified number.</div>
+  </fieldset>
+
+  <button class="btn primary" id="add">Add entry</button>
+
+  <div class="added" id="addedWrap" style="display:none">
+    <h2>Entries ready to paste <span id="count"></span></h2>
+    <div id="rows"></div>
+  </div>
+
+  <div class="outwrap" id="outwrap">
+    <h2>Paste this into index.html</h2>
+    <p>Drop it right after <code>const JOBS = [</code> — new entries go on top so they sort first.</p>
+    <pre id="out"></pre>
+    <div class="copybar">
+      <button class="btn primary" id="copy">Copy</button>
+      <button class="btn ghost" id="clear">Clear all</button>
+    </div>
+  </div>
+</main>
+
+<div class="toast" id="toast">Copied</div>
+
+<script>
+/* Keep DEPTS identical to index.html. If you change it there, change it here too. */
+const DEPTS={
+  leadership:{label:"IT Leadership & Strategy",color:"#4338ca",subs:["CIO / IT Head","IT Strategy & Planning","IT Portfolio Management","IT Governance"]},
+  infra:{label:"IT Infrastructure",color:"#2563eb",subs:["Data Center","Servers","Storage","Virtualization","Backup & Recovery","Cloud Infrastructure","Database Administration"]},
+  network:{label:"Network & Telecom",color:"#0d9488",subs:["Network Operations (NOC)","LAN/WAN","Wi-Fi","SD-WAN","Firewall / Network Security","Telecom / Voice","VPN / Remote Access"]},
+  euc:{label:"End User Computing",color:"#d97706",subs:["Desktop Support","Laptop / Mobile Management","Service Desk / Help Desk","Microsoft 365","Endpoint Management","Asset Management"]},
+  cyber:{label:"Cybersecurity",color:"#dc2626",subs:["Security Operations Center (SOC)","Security Engineering","Network Security","Endpoint Security","Vulnerability Management","Penetration Testing / Security Assessment","Threat Intelligence","Incident Response","Digital Forensics","Email Security","Data Loss Prevention (DLP)","Identity & Access Management (IAM)","Privileged Access Management (PAM)"]},
+  grc:{label:"GRC / InfoSec Governance",color:"#be123c",subs:["Governance, Risk & Compliance","IT Risk Management","Security Policies & Standards","Security Audits","Compliance","Third-Party Risk","Security Awareness","Business Continuity / Disaster Recovery"]},
+  apps:{label:"Applications / Software",color:"#7c3aed",subs:["Application Development","Application Support","ERP","CRM","HR Applications","Finance Applications","Business Applications","API / Integration","DevOps"]},
+  cloud:{label:"Cloud & Digital",color:"#0891b2",subs:["Cloud Operations","Cloud Security","DevOps / DevSecOps","Automation","Digital Platforms","Containers / Kubernetes","AI / GenAI"]},
+  data:{label:"Data & Analytics",color:"#16a34a",subs:["Data Engineering","Data Management","Data Governance","Business Intelligence","Data Analytics","Data Science","Data Security"]},
+  itsm:{label:"IT Service Management",color:"#ea580c",subs:["ITSM","Incident Management","Problem Management","Change Management","Request Management","Configuration Management / CMDB","Service Level Management"]},
+  asset:{label:"IT Asset & Vendor Mgmt",color:"#a16207",subs:["Hardware Asset Management","Software Asset Management","License Management","Vendor Management","Procurement","Contract Management"]},
+  bcr:{label:"Business Continuity & Resilience",color:"#9333ea",subs:["Business Continuity Planning","Disaster Recovery","Crisis Management","Backup & Recovery","DR Testing"]},
+};
+const $=s=>document.querySelector(s);
+let entries=[];
+
+// populate departments
+$("#dept").insertAdjacentHTML("beforeend",Object.entries(DEPTS).map(([k,v])=>`<option value="${k}">${v.label}</option>`).join(""));
+// today
+$("#posted").value=(()=>{const d=new Date();const p=n=>String(n).padStart(2,"0");return d.getFullYear()+"-"+p(d.getMonth()+1)+"-"+p(d.getDate());})();
+
+$("#dept").addEventListener("change",e=>{
+  const k=e.target.value,sub=$("#sub");
+  if(k){sub.disabled=false;sub.innerHTML=`<option value="">Select…</option>`+DEPTS[k].subs.map(s=>`<option>${s}</option>`).join("");}
+  else{sub.disabled=true;sub.innerHTML=`<option value="">Select department first</option>`;}
+});
+function toggleVenue(){const m=$("#imode").value;$("#venueWrap").hidden=(m==="Online"||m==="Varies");}
+$("#imode").addEventListener("change",toggleVenue);toggleVenue();
+// auto-suggest venueQuery
+$("#imode").addEventListener("change",fillVenueQuery);
+["co","city"].forEach(id=>$("#"+id).addEventListener("input",fillVenueQuery));
+function fillVenueQuery(){const vq=$("#ivenuequery");if(vq.dataset.touched)return;const m=$("#imode").value;if(m==="Online"||m==="Varies")return;vq.value=[$("#co").value.trim(),$("#city").value.trim()].filter(Boolean).join(" ");}
+$("#ivenuequery").addEventListener("input",()=>{$("#ivenuequery").dataset.touched="1";});
+
+function q(v){return JSON.stringify(v==null?"":String(v));}
+function buildEntry(e){
+  const vacNum=/^\d+$/.test(e.vac.trim());
+  const vac=e.vac.trim()? (vacNum? e.vac.trim() : q(e.vac.trim())) : q("Multiple");
+  let s=`  {co:${q(e.co)}, role:${q(e.role)}, dept:${q(e.dept)}, sub:${q(e.sub)}, type:${q(e.type)}, state:${q(e.state)}, city:${q(e.city)}, vac:${vac},\n`;
+  s+=`   note:${q(e.note)},\n`;
+  s+=`   apply:${q(e.apply)}, posted:${q(e.posted)}`;
+  if(e.last)s+=`, last:${q(e.last)}`;
+  s+=`,\n`;
+  const online=(e.imode==="Online"||e.imode==="Varies");
+  s+=`   interview:{mode:${q(e.imode)},venue:${q(online?"":e.ivenue)},venueQuery:${q(online?"":e.ivenuequery)}}, contact:{name:${q(e.cname)},title:${q(e.ctitle)},phone:${q(e.cphone)},email:${q(e.cemail)}}},`;
+  return s;
+}
+function validate(e){
+  const errs=[];
+  if(!e.co)errs.push("Company is required.");
+  if(!e.role)errs.push("Role is required.");
+  if(!e.dept)errs.push("Department is required.");
+  if(!e.sub)errs.push("Sub-department is required.");
+  if(!e.apply)errs.push("Apply link is required.");
+  else if(!/^https?:\/\/.+/i.test(e.apply))errs.push("Apply link must start with http:// or https://");
+  if(e.cphone && !/^[+\d][\d\s-]{6,}$/.test(e.cphone))errs.push("Phone looks off — leave it blank unless verified.");
+  if(e.last && e.posted && e.last<e.posted)errs.push("Last date is before the posted date.");
+  return errs;
+}
+function read(){
+  return {co:$("#co").value.trim(),role:$("#role").value.trim(),dept:$("#dept").value,sub:$("#sub").value,
+    type:$("#type").value,state:$("#state").value,city:$("#city").value.trim(),vac:$("#vac").value,
+    note:$("#note").value.trim(),apply:$("#apply").value.trim(),posted:$("#posted").value,last:$("#last").value,
+    imode:$("#imode").value,ivenue:$("#ivenue").value.trim(),ivenuequery:$("#ivenuequery").value.trim(),
+    cname:$("#cname").value.trim(),ctitle:$("#ctitle").value.trim(),cphone:$("#cphone").value.trim(),cemail:$("#cemail").value.trim()};
+}
+$("#add").addEventListener("click",()=>{
+  const e=read(),errs=validate(e),box=$("#errbox");
+  if(errs.length){box.style.display="block";box.innerHTML="Fix these:<ul>"+errs.map(x=>`<li>${x}</li>`).join("")+"</ul>";window.scrollTo({top:0,behavior:"smooth"});return;}
+  box.style.display="none";
+  entries.push(e);
+  renderList();
+  // reset the parts that change per job, keep dept/state for speed
+  ["co","role","vac","note","apply","ivenue","ivenuequery","ctitle","cphone","cemail"].forEach(id=>$("#"+id).value="");
+  $("#cname").value="Talent Acquisition — Fresher Hiring";
+  $("#ivenuequery").removeAttribute("data-touched");
+  $("#co").focus();
+});
+function renderList(){
+  $("#addedWrap").style.display=entries.length?"block":"none";
+  $("#outwrap").style.display=entries.length?"block":"none";
+  $("#count").textContent=entries.length?`(${entries.length})`:"";
+  $("#rows").innerHTML=entries.map((e,i)=>`<div class="row"><span class="dot" style="background:${DEPTS[e.dept].color}"></span><div class="txt"><b>${escapeHtml(e.role||"—")}</b><small>${escapeHtml(e.co)} · ${DEPTS[e.dept].label} · ${e.city} · ${e.imode}</small></div><button data-i="${i}" aria-label="Remove">×</button></div>`).join("");
+  $("#rows").querySelectorAll("button").forEach(b=>b.addEventListener("click",()=>{entries.splice(+b.dataset.i,1);renderList();}));
+  $("#out").textContent="// ↓ paste at the TOP of the JOBS array (right after: const JOBS = [ )\n"+entries.map(buildEntry).join("\n");
+}
+function escapeHtml(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+$("#copy").addEventListener("click",()=>{
+  const text=entries.map(buildEntry).join("\n");
+  const done=()=>{const t=$("#toast");t.classList.add("show");setTimeout(()=>t.classList.remove("show"),1400);};
+  if(navigator.clipboard){navigator.clipboard.writeText(text).then(done).catch(()=>fallback(text,done));}else fallback(text,done);
+});
+function fallback(text,done){const ta=document.createElement("textarea");ta.value=text;document.body.appendChild(ta);ta.select();try{document.execCommand("copy");done();}catch(e){alert("Select the box and copy manually.");}document.body.removeChild(ta);}
+$("#clear").addEventListener("click",()=>{if(confirm("Clear all added entries?")){entries=[];renderList();}});
+</script>
+</body>
+</html>
