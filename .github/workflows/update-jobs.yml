@@ -1,0 +1,44 @@
+name: Auto-update job listings
+ 
+# Runs on a timer, pulls fresh openings from the ATS APIs configured in
+# scripts/update-jobs.mjs, and commits jobs.json. That push re-triggers the
+# Pages deploy, so the live app refreshes on its own.
+on:
+  schedule:
+    - cron: "30 0 * * *"     # 00:30 UTC = 06:00 IST, once daily. Change as needed.
+  workflow_dispatch:          # also lets you run it on demand from the Actions tab
+ 
+permissions:
+  contents: write
+ 
+concurrency:
+  group: update-jobs
+  cancel-in-progress: false
+ 
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+ 
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+ 
+      - name: Fetch latest listings
+        run: node scripts/update-jobs.mjs
+ 
+      - name: Commit jobs.json if it changed
+        run: |
+          git config user.name  "freshers-adda-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add jobs.json
+          if git diff --staged --quiet; then
+            echo "No changes today."
+          else
+            git commit -m "Auto-update job listings ($(date -u +%F))"
+            git push
+          fi
+ 
